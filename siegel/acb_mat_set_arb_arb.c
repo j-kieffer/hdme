@@ -1,5 +1,5 @@
-
 #include "siegel.h"
+#include <flint/acb.h>
 
 void
 acb_mat_set_arb_arb(acb_mat_t z, const arb_mat_t re, const arb_mat_t im)

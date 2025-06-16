@@ -1,3 +1,4 @@
+#include <stdlib.h>
 
 #include "siegel.h"
 
@@ -9,9 +10,9 @@ int main()
   flint_printf("siegel_fundamental_domain....");
   fflush(stdout);
   
-  flint_randinit(state);
+  flint_rand_init(state);
 
-  for (iter = 0; iter < 100 * arb_test_multiplier(); iter++)
+  for (iter = 0; iter < 100 * flint_test_multiplier(); iter++)
     {
       slong g = 2;
       slong bits = 10 + n_randint(state, 500);
@@ -81,7 +82,7 @@ int main()
       fmpz_mat_clear(m);
     }
 
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;

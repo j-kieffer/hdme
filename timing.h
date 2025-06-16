@@ -6,7 +6,9 @@
 #define TIMING_H
 
 #include <stdio.h>
+#include <time.h>
 #include <sys/resource.h>
+#include <sys/time.h>
 
 typedef struct timeval timeval;
 
@@ -72,7 +74,7 @@ static double timestamp_diff_in_seconds(timestamp_type start, timestamp_type end
 #endif
 
 
-static inline double get_cpu_time(){
+static inline double get_cpu_time(void){
     return (double)clock() / CLOCKS_PER_SEC;
 }
 

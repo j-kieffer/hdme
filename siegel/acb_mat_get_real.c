@@ -1,5 +1,5 @@
-
 #include "siegel.h"
+#include <flint/acb.h>
 
 void
 acb_mat_get_real(arb_mat_t re, const acb_mat_t z)

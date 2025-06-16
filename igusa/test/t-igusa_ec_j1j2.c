@@ -1,4 +1,4 @@
-
+#include <stdlib.h>
 #include "igusa.h"
 
 int main()
@@ -10,9 +10,9 @@ int main()
   flint_printf("igusa_ec_j1j2....");
   fflush(stdout);
 
-  flint_randinit(state);
+  flint_rand_init(state);
 
-  for (iter = 0; iter < 100 * arb_test_multiplier(); iter++)
+  for (iter = 0; iter < 100 * flint_test_multiplier(); iter++)
     {
       fmpz* I;
       acb_ptr j;
@@ -93,7 +93,7 @@ int main()
       acb_clear(scal);
     }
 
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;

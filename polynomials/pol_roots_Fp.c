@@ -1,5 +1,6 @@
-
 #include "polynomials.h"
+#include <flint/fmpz_mod_poly_factor.h>
+#include <flint/fmpz_mod.h>
 
 void pol_roots_Fp(slong* nb_roots, fmpz* roots, slong* mults,
 		  const fmpz_mod_poly_t pol, const fmpz_mod_ctx_t ctx)

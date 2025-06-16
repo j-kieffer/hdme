@@ -1,3 +1,4 @@
+#include <stdlib.h>
 
 #include "hilbert.h"
 
@@ -10,13 +11,13 @@ int main()
   flint_printf("hilbert_inverse....");
   fflush(stdout);
   
-  flint_randinit(state);
+  flint_rand_init(state);
   
   for (delta = 5; delta < 100; delta++)
     {
       if (hilbert_is_fundamental(delta))
 	{
-	  for (iter = 0; iter < 10 * arb_test_multiplier(); iter++)
+	  for (iter = 0; iter < 10 * flint_test_multiplier(); iter++)
 	    {
 	      acb_ptr t, t_test;
 	      acb_mat_t tau, tau_test;
@@ -94,7 +95,7 @@ int main()
 	}
     }
 
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;

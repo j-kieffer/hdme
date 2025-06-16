@@ -1,5 +1,6 @@
-
+#include <stdlib.h>
 #include "polynomials.h"
+#include <flint/fmpq.h>
 
 int main()
 {
@@ -9,9 +10,9 @@ int main()
   flint_printf("acb_poly_product_tree_2....");
   fflush(stdout);
 
-  flint_randinit(state);
+  flint_rand_init(state);
 
-  for (iter = 0; iter < 100 * arb_test_multiplier(); iter++)
+  for (iter = 0; iter < 100 * flint_test_multiplier(); iter++)
     {
       acb_poly_t Q, Q_test;
       acb_ptr xi, yi, zi;
@@ -55,7 +56,7 @@ int main()
       _acb_vec_clear(zi, d);
     }
   
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;

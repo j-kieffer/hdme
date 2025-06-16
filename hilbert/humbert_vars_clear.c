@@ -1,4 +1,5 @@
 
+#include <stdlib.h>
 #include "hilbert.h"
 
 void humbert_vars_clear(char** vars)

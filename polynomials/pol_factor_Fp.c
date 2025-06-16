@@ -1,5 +1,5 @@
-
 #include "polynomials.h"
+#include <flint/fmpz_mod_poly_factor.h>
 
 void pol_factor_Fp(slong* nb_factors, fmpz_mod_poly_struct* factors, slong* exps,
 		   const fmpz_mod_poly_t pol, const fmpz_mod_ctx_t ctx)

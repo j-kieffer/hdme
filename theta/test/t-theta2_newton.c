@@ -1,4 +1,4 @@
-
+#include <stdlib.h>
 #include "theta.h"
 
 int main()
@@ -9,9 +9,9 @@ int main()
   flint_printf("theta2_newton....");
   fflush(stdout);
 
-  flint_randinit(state);
+  flint_rand_init(state);
 
-  for (iter = 0; iter < 10 * arb_test_multiplier(); iter++)
+  for (iter = 0; iter < 10 * flint_test_multiplier(); iter++)
     {
       slong g = 2;
       slong bits = 10 + n_randint(state, 2500);
@@ -110,7 +110,7 @@ int main()
       _acb_vec_clear(th_test, 16);
       acb_clear(th0);
     }
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;

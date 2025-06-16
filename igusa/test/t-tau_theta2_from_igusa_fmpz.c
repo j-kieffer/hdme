@@ -1,3 +1,4 @@
+#include <stdlib.h>
 
 #include "igusa.h"
 
@@ -10,9 +11,9 @@ int main()
   flint_printf("tau_theta2_from_igusa_fmpz....");
   fflush(stdout);
 
-  flint_randinit(state);
+  flint_rand_init(state);
 
-  for (iter = 0; iter < 15 * arb_test_multiplier(); iter++)
+  for (iter = 0; iter < 15 * flint_test_multiplier(); iter++)
     {
       fmpz* I;
       acb_ptr I_acb;
@@ -91,7 +92,7 @@ int main()
       acb_clear(scal);
     }
 
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;

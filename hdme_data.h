@@ -11,12 +11,18 @@
 #ifndef HDME_DATA_H
 #define HDME_DATA_H
 
-#include <acb.h>
-#include <arb.h>
 #include <flint/flint.h>
+#include <flint/fmpz.h>
+#include <flint/fmpq.h>
+#include <flint/acb.h>
+#include <flint/arb.h>
 #include <flint/fmpq_mpoly.h>
 #include <flint/mpoly.h>
 #include <stdio.h>
+
+#ifndef HDME_PATH
+#error "HDME_PATH must be defined"
+#endif
 
 #define HDME_DATA_STR_LEN 10000
 #define HDME_DATA_FILE_LEN 1000

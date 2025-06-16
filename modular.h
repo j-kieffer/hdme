@@ -11,10 +11,14 @@
 #ifndef MODULAR_H
 #define MODULAR_H
 
-#include <acb.h>
-#include <acb_mat.h>
-#include <acb_poly.h>
-#include <arb.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <gmp.h>
+
+#include <flint/acb.h>
+#include <flint/acb_mat.h>
+#include <flint/acb_poly.h>
+#include <flint/arb.h>
 #include <flint/flint.h>
 #include <flint/fmpq_vec.h>
 #include <flint/fmpz_mod.h>
@@ -23,6 +27,7 @@
 #include <flint/fmpz_vec.h>
 #include <flint/ulong_extras.h>
 
+#include "flint_compat.h"
 #include "siegel.h"
 #include "theta.h"
 #include "igusa.h"

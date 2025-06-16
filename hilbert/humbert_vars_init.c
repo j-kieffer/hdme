@@ -1,7 +1,8 @@
 
+#include <stdlib.h>
 #include "hilbert.h"
 
-char** humbert_vars_init()
+char** humbert_vars_init(void)
 {
   char** vars;
   vars = malloc(2 * sizeof(char*));

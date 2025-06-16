@@ -1,4 +1,4 @@
-
+#include <stdlib.h>
 #include "theta.h"
 
 
@@ -10,9 +10,9 @@ int main()
   flint_printf("borchardt_mean_m0_M0....");
   fflush(stdout);
 
-  flint_randinit(state);
+  flint_rand_init(state);
 
-  for (iter = 0; iter < 10000 * arb_test_multiplier(); iter++)
+  for (iter = 0; iter < 10000 * flint_test_multiplier(); iter++)
     {
       slong mag_bits = n_randint(state, 5);
       slong prec = 32 + n_randint(state, 200);
@@ -88,7 +88,7 @@ int main()
       arb_clear(abs);
     }
   
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;

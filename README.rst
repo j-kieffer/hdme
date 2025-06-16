@@ -23,26 +23,26 @@ in the associated paper `[K21]`_.
 Prerequisites
 =============
 
-An installation of `Arb`_ version 2.21.0 or later, and `Flint`_
-version 2.8.0 or later.
+An installation of `Flint`_ version 3 or later.
 
 Installation
 ============
 
-Run
 ::
-  ./configure
-  
-to create the Makefile. To compile the library, run
-::
+
+  git clone https://github.com/j-kieffer/hdme.git && cd hdme
+  ./configure                        # ./configure --help for more options
   make
-  
-This will produce a shared library in the source directory. The
-Makefile also responds to the standard commands ::
-  make tests
-  make check
-  make clean
-  
+  make tests                         # optional
+  make check                         # optional
+  make install                       # optional
+
+Common configuration examples::
+
+  ./configure --with-flint=/opt/homebrew --with-mpfr=/opt/homebrew --with-gmp=/opt/homebrew
+  ./configure --prefix=$HOME/local --enable-debug
+  ./configure --disable-openmp
+
 Documentation
 =============
 

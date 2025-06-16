@@ -1,4 +1,5 @@
 
+#include <flint/nmod_mat.h>
 #include "hecke.h"
 
 int siegel_T1_coset_contains_line_dual(const fmpz_mat_t m,

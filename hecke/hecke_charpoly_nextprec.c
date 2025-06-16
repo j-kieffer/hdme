@@ -1,4 +1,5 @@
 
+#include <math.h>
 #include "hecke.h"
 
 slong hecke_charpoly_nextprec(slong prec)

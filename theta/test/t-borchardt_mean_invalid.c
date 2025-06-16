@@ -1,4 +1,4 @@
-
+#include <stdlib.h>
 #include "theta.h"
 
 int main()
@@ -9,9 +9,9 @@ int main()
   flint_printf("borchardt_mean_invalid....");
   fflush(stdout);
 
-  flint_randinit(state);
+  flint_rand_init(state);
 
-  for (iter = 0; iter < 500 * arb_test_multiplier(); iter++)
+  for (iter = 0; iter < 500 * flint_test_multiplier(); iter++)
     {
       acb_ptr a;
       arb_t x;
@@ -89,7 +89,7 @@ int main()
       _acb_vec_clear(a, 4);
       arb_clear(x);
     }
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;

@@ -1,4 +1,5 @@
-
+#include <gmp.h>
+#include <flint/fmpz_vec.h>
 #include "polynomials.h"
 
 static int

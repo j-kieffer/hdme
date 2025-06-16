@@ -1,3 +1,4 @@
+#include <stdlib.h>
 
 #include "igusa.h"
 
@@ -9,9 +10,9 @@ int main()
   flint_printf("cov_factors....");
   fflush(stdout);
 
-  flint_randinit(state);
+  flint_rand_init(state);
 
-  for (iter = 0; iter < 500 * arb_test_multiplier(); iter++)
+  for (iter = 0; iter < 500 * flint_test_multiplier(); iter++)
     {
       slong nb = 1 + n_randint(state, 10);
       slong mag_bits = 10;
@@ -62,7 +63,7 @@ int main()
       fmpz_factor_clear(fac);
     }
 
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;

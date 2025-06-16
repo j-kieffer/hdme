@@ -1,5 +1,6 @@
-
 #include "polynomials.h"
+#include <flint/fmpq.h>
+#include <flint/fmpq_poly.h>
 
 int acb_poly_rationalize(fmpq_poly_t pol, const acb_poly_t pol_acb,
 			 slong degree, slong prec)

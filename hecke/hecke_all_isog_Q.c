@@ -1,4 +1,5 @@
 
+#include <string.h>
 #include "hecke.h"
 
 int hecke_all_isog_Q(slong* nb_roots, fmpz* all_I, const hecke_t H, fmpz* I, slong prec) {

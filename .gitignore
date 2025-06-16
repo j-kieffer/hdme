@@ -19,3 +19,44 @@ Makefile
 *.txt
 *.o
 *.so*
+
+# Autotools generated files (autoreconf)
+autom4te.cache/
+configure
+aclocal.m4
+config/install-sh
+config/missing
+config/compile
+config/config.guess
+config/config.sub
+config/depcomp
+config/ltmain.sh
+
+# Configure generated files (./configure)
+config.status
+config.h
+*.pc
+stamp-h1
+
+# Additional build artifacts
+*.dylib
+*.dylib.0
+*.dll
+.deps/
+.libs/
+libtool
+*.la
+*.lo
+
+
+
+# Editor and IDE settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# But ensure important autotools files are tracked
+!configure.ac
+!bootstrap.sh
+!hdme.pc.in

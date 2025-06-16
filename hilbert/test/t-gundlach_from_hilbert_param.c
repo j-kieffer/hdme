@@ -1,3 +1,4 @@
+#include <stdlib.h>
 
 #include "hilbert.h"
 
@@ -9,9 +10,9 @@ int main()
   flint_printf("gundlach_from_hilbert_param....");
   fflush(stdout);
 
-  flint_randinit(state);
+  flint_rand_init(state);
 
-  for (iter = 0; iter < 100 * arb_test_multiplier(); iter++)
+  for (iter = 0; iter < 100 * flint_test_multiplier(); iter++)
     {
       slong delta = 5;
       slong prec = 1000 + n_randint(state, 2000);
@@ -62,7 +63,7 @@ int main()
       _acb_vec_clear(G_test, 3);
     }  
 
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;

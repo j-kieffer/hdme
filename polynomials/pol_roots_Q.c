@@ -1,5 +1,5 @@
-
 #include "polynomials.h"
+#include <flint/fmpq.h>
 
 void pol_roots_Q(slong* nb_roots, fmpq* roots, slong* mults,
 		 const fmpz_poly_t pol)

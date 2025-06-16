@@ -1,4 +1,4 @@
-
+#include <stdlib.h>
 #include "modular.h"
 
 int main()
@@ -10,9 +10,9 @@ int main()
   flint_printf("modeq_ctx_add_pair....");
   fflush(stdout);
 
-  flint_randinit(state);
+  flint_rand_init(state);
 
-  for (iter = 0; iter < 200 * arb_test_multiplier(); iter++)
+  for (iter = 0; iter < 200 * flint_test_multiplier(); iter++)
     {
       modeq_ctx_t ctx;
       slong nb = 1+n_randint(state, 200);
@@ -54,7 +54,7 @@ int main()
       modeq_ctx_clear(ctx);
     }
   
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;

@@ -1,0 +1,14 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+includedir=@includedir@
+
+Name: HDME
+Description: High Degree Modular Equations Library
+Version: @HDME_VERSION@
+URL: https://github.com/j-kieffer/hdme
+
+Libs: -L${libdir} -lhdme @LIBS@
+Cflags: -I${includedir} @INCS@
+
+Requires.private: 

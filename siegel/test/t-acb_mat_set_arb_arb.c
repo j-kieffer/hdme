@@ -1,4 +1,4 @@
-
+#include <stdlib.h>
 #include "siegel.h"
 
 int main()
@@ -9,9 +9,9 @@ int main()
   flint_printf("acb_mat_set_arb_arb....");
   fflush(stdout);
   
-  flint_randinit(state);
+  flint_rand_init(state);
   
-  for (iter = 0; iter < 100 * arb_test_multiplier(); iter++)
+  for (iter = 0; iter < 100 * flint_test_multiplier(); iter++)
     {
       acb_mat_t z;
       arb_mat_t re, im, re2, im2;
@@ -53,7 +53,7 @@ int main()
       arb_mat_clear(im2);
     }
   
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;

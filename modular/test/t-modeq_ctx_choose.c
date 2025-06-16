@@ -1,4 +1,4 @@
-
+#include <stdlib.h>
 #include "modular.h"
 
 int main()
@@ -10,9 +10,9 @@ int main()
   flint_printf("modeq_ctx_choose....");
   fflush(stdout);
 
-  flint_randinit(state);
+  flint_rand_init(state);
 
-  for (iter = 0; iter < 10 * arb_test_multiplier(); iter++)
+  for (iter = 0; iter < 10 * flint_test_multiplier(); iter++)
     {
       slong nb = 1 + n_randint(state, 100);
       slong i1, i2;
@@ -67,7 +67,7 @@ int main()
       acb_clear(ev);
     }
   
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;

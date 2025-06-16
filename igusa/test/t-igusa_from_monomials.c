@@ -1,3 +1,4 @@
+#include <stdlib.h>
 
 #include "igusa.h"
 
@@ -9,9 +10,9 @@ int main()
   flint_printf("igusa_from_monomials....");
   fflush(stdout);
 
-  flint_randinit(state);
+  flint_rand_init(state);
 
-  for (iter = 0; iter < 500 * arb_test_multiplier(); iter++)
+  for (iter = 0; iter < 500 * flint_test_multiplier(); iter++)
     {
       fmpz* I;
       fmpz* M;
@@ -104,7 +105,7 @@ int main()
       fmpz_mpoly_ctx_clear(ctx);      
     }
   
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;

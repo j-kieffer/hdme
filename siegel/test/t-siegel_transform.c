@@ -1,3 +1,4 @@
+#include <stdlib.h>
 
 #include "siegel.h"
 
@@ -9,10 +10,10 @@ int main()
   flint_printf("siegel_transform....");
   fflush(stdout);
   
-  flint_randinit(state);
+  flint_rand_init(state);
   
   /* Check associativity */
-  for (iter = 0; iter < 100 * arb_test_multiplier(); iter++)
+  for (iter = 0; iter < 100 * flint_test_multiplier(); iter++)
     {
       fmpz_mat_t m, n, mn;
       acb_mat_t z1, z2, z3;
@@ -88,7 +89,7 @@ int main()
       acb_mat_clear(z3);
     }
   
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;

@@ -1,4 +1,3 @@
-
 #include "hdme_data.h"
 
 /* Declare static strings humbert_5_A, etc. */
@@ -8,6 +7,7 @@
 #include "hdme_data/cardona.inc"
 #include "hdme_data/humbert.inc"
 #include "hdme_data/hilbert.inc"
+#include <string.h>
 
 /* Fit these strings in a big lookuptable */
 

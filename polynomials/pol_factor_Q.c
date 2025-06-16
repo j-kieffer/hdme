@@ -1,5 +1,5 @@
-
 #include "polynomials.h"
+#include <flint/fmpz_poly_factor.h>
 
 void pol_factor_Q(slong* nb_factors, fmpz_poly_struct* factors, slong* exps,
 		  const fmpz_poly_t pol)

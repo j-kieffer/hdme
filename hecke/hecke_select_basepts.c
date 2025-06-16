@@ -11,7 +11,7 @@ int hecke_select_basepts(acb_mat_struct* pts, acb_mat_t basis_inv,
   slong nb = cov_nb_monomials(wt, 4, weights);
   int res = 0;
   
-  flint_randinit(state);
+  flint_rand_init(state);
   
   for (j = 0; j < jmax; j++)
     {
@@ -25,6 +25,6 @@ int hecke_select_basepts(acb_mat_struct* pts, acb_mat_t basis_inv,
       if (res) break;
     }
 
-  flint_randclear(state);
+  flint_rand_clear(state);
   return res;  
 }

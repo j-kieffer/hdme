@@ -1,3 +1,5 @@
+#include <stdlib.h>
+#include <flint/fmpq.h>
 
 #include "siegel.h"
 
@@ -9,9 +11,9 @@ int main()
   flint_printf("arb_mat_minkowski_reduce....");
   fflush(stdout);
   
-  flint_randinit(state);
+  flint_rand_init(state);
 
-  for (iter = 0; iter < 1000 * arb_test_multiplier(); iter++)
+  for (iter = 0; iter < 1000 * flint_test_multiplier(); iter++)
     {
       arb_t y1;
       arb_t y2;
@@ -118,7 +120,7 @@ int main()
       fmpz_mat_clear(u2);
     }
   
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;

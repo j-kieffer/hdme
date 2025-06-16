@@ -1,4 +1,5 @@
 
+#include <flint/nmod_mat.h>
 #include "modular.h"
 
 int alt_2step_line(fmpz_mat_t L, slong* indices, slong nb, const hecke_t H)

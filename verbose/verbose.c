@@ -10,7 +10,7 @@ int set_borchardt_verbose(int i) {
   return verbose;
 }
 
-int get_borchardt_verbose() {
+int get_borchardt_verbose(void) {
   return set_borchardt_verbose(-1);
 }
 
@@ -25,7 +25,7 @@ int set_hecke_verbose(int i) {
   return verbose;
 }
 
-int get_hecke_verbose() {
+int get_hecke_verbose(void) {
   return set_hecke_verbose(-1);
 }
 
@@ -40,7 +40,7 @@ int set_hilbert_lll_verbose(int i) {
   return verbose;
 }
 
-int get_hilbert_lll_verbose() {
+int get_hilbert_lll_verbose(void) {
   return set_hilbert_lll_verbose(-1);
 }
 
@@ -55,7 +55,7 @@ int set_modeq_verbose(int i) {
   return verbose;
 }
 
-int get_modeq_verbose() {
+int get_modeq_verbose(void) {
   return set_modeq_verbose(-1);
 }
 
@@ -70,7 +70,7 @@ int set_pol_verbose(int i) {
   return verbose;
 }
 
-int get_pol_verbose() {
+int get_pol_verbose(void) {
   return set_pol_verbose(-1);
 }
 
@@ -85,7 +85,7 @@ int set_siegel_verbose(int i) {
   return verbose;
 }
 
-int get_siegel_verbose() {
+int get_siegel_verbose(void) {
   return set_siegel_verbose(-1);
 }
 
@@ -100,7 +100,7 @@ int set_theta_verbose(int i) {
   return verbose;
 }
 
-int get_theta_verbose() {
+int get_theta_verbose(void) {
   return set_theta_verbose(-1);
 }
 
@@ -115,7 +115,7 @@ int set_thomae_verbose(int i) {
   return verbose;
 }
 
-int get_thomae_verbose() {
+int get_thomae_verbose(void) {
   return set_thomae_verbose(-1);
 }
 

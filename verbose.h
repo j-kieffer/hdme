@@ -14,28 +14,28 @@
 
 // there must be a smart way to do this with the precompiler...
 int set_borchardt_verbose(int i);
-int get_borchardt_verbose();
+int get_borchardt_verbose(void);
 
 int set_hecke_verbose(int i);
-int get_hecke_verbose();
+int get_hecke_verbose(void);
 
 int set_hilbert_lll_verbose(int i);
-int get_hilbert_lll_verbose();
+int get_hilbert_lll_verbose(void);
 
 int set_modeq_verbose(int i);
-int get_modeq_verbose();
+int get_modeq_verbose(void);
 
 int set_pol_verbose(int i);
-int get_pol_verbose();
+int get_pol_verbose(void);
 
 int set_siegel_verbose(int i);
-int get_siegel_verbose();
+int get_siegel_verbose(void);
 
 int set_theta_verbose(int i);
-int get_theta_verbose();
+int get_theta_verbose(void);
 
 int set_thomae_verbose(int i);
-int get_thomae_verbose();
+int get_thomae_verbose(void);
 
 
 void progress_bar(slong current, slong total, const char prefix[]);

@@ -1,4 +1,5 @@
 
+#include <math.h>
 #include "modular.h"
 
 slong modeq_nextprec_generic(slong current_prec)

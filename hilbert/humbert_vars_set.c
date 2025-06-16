@@ -1,4 +1,5 @@
 
+#include <string.h>
 #include "hilbert.h"
 
 void humbert_vars_set(char** vars, slong delta)

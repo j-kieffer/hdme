@@ -1,0 +1,248 @@
+name: "Run Tests"
+
+on:
+  push:
+    branches: ['master']
+  workflow_dispatch:
+
+env:
+  GLOBAL_MULTIPLIER: 1
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run-tests-ubuntu:
+    name: Test (Ubuntu, ${{ matrix.config.name }})
+    runs-on: ubuntu-24.04
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { name: "shared", options: "--disable-static --enable-shared", shared: true }
+          - { name: "static", options: "--enable-static --disable-shared", shared: false }
+          # - { name: "shared and static", options: "--enable-static --enable-shared", shared: true }
+
+    env:
+      FLINT_TEST_MULTIPLIER: "10"
+
+    steps:
+      - name: "Rescale multiplier"
+        run: |
+          FLINT_TEST_MULTIPLIER=$(echo "${FLINT_TEST_MULTIPLIER} * ${GLOBAL_MULTIPLIER}" | bc)
+          echo "FLINT_TEST_MULTIPLIER=${FLINT_TEST_MULTIPLIER}"
+          echo "FLINT_TEST_MULTIPLIER=${FLINT_TEST_MULTIPLIER}" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v4
+      
+      - name: "Setup"
+        run: |
+          sudo apt-get install -y \
+            libflint-dev \
+            libgmp-dev \
+            libmpfr-dev \
+            autoconf \
+            libtool-bin 
+
+          # Check versions
+          gcc --version
+          make --version
+          autoconf --version
+          libtool --version
+          echo "MAKE=make -j$(expr $(nproc) + 1) --output-sync=target" >> $GITHUB_ENV
+      
+      
+      - name: "Configure and build"
+        run: |
+          ./bootstrap.sh
+          ./configure ${{ matrix.config.options }}
+
+      - name: "Compile library"
+        run: |
+          $MAKE
+          $MAKE tests
+          if ${{ matrix.config.shared }}; then
+            ldd libhdme.so
+          fi
+      
+      - name: "Debug"
+        run: |
+          pwd
+          ls -lR
+          if ${{ matrix.config.shared }}; then
+            ldd build/polynomials/test/t-acb_poly_product_tree_1
+          fi
+
+      - name: "Run tests"
+        run: |
+          $MAKE check_ci 
+
+  run-tests-macos:
+    name: Test (macOS, ${{ matrix.config.name }})
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        config:
+          - { name: "shared", options: "--disable-static --enable-shared", shared: true }
+          - { name: "static", options: "--enable-static --disable-shared", shared: false }
+          # - { name: "shared and static", options: "--enable-static --enable-shared", shared: true }
+
+    env:
+      FLINT_TEST_MULTIPLIER: "10"
+
+    steps:
+      - name: "Rescale multiplier"
+        run: |
+          FLINT_TEST_MULTIPLIER=$(echo "${FLINT_TEST_MULTIPLIER} * ${GLOBAL_MULTIPLIER}" | bc)
+          echo "FLINT_TEST_MULTIPLIER=${FLINT_TEST_MULTIPLIER}"
+          echo "FLINT_TEST_MULTIPLIER=${FLINT_TEST_MULTIPLIER}" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v4
+      
+      - name: "Setup"
+        run: |
+          # GMP and MPFR are already installed, and it complains if we try to
+          # install it.
+          #   brew install gmp
+          #   brew install mpfr
+          brew install make
+          brew install autoconf
+          brew install libtool
+          brew install automake
+          brew install llvm
+          brew install flint
+          $(brew --prefix llvm)/bin/clang --version
+          gmake --version
+          autoconf --version
+          echo "MAKE=gmake -j$(sysctl -n hw.ncpu) -l 10 --output-sync=target" >> $GITHUB_ENV
+      
+      
+      - name: "Configure and build"
+        run: |
+          ./bootstrap.sh
+          ./configure ${{ matrix.config.options }} \
+            CC=$(brew --prefix llvm)/bin/clang \
+            --with-gmp=$(brew --prefix) \
+            --with-mpfr=$(brew --prefix) \
+            --with-flint=$(brew --prefix)
+
+      - name: "Compile library"
+        run: |
+          $MAKE
+          $MAKE tests
+          if ${{ matrix.config.shared }}; then
+            otool -L libhdme.dylib
+          fi
+      
+      - name: "Run tests"
+        run: |
+          $MAKE check_ci 
+
+  run-tests-ubuntu-latest-flint:
+    name: Test (Ubuntu, latest flint)
+    runs-on: ubuntu-24.04
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: "Install Homebrew"
+        run: |
+          NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+          echo "/home/linuxbrew/.linuxbrew/bin" >> $GITHUB_PATH
+
+      - name: "Setup"
+        run: |
+          brew install gcc
+          brew install flint
+
+          sudo apt-get install -y \
+            autoconf \
+            libtool-bin
+
+          # Find the actual GCC binary (it's often installed with a version suffix)
+          GCC_PATH=$(find $(brew --prefix)/bin -name 'gcc-*' | head -1)
+          if [ -z "$GCC_PATH" ]; then
+            GCC_PATH=$(brew --prefix)/bin/gcc
+          fi
+          echo "GCC_PATH=$GCC_PATH" >> $GITHUB_ENV
+          
+          # Check versions
+          $GCC_PATH --version
+          make --version
+          autoconf --version
+          libtool --version
+          echo "MAKE=make -j$(expr $(nproc) + 1) --output-sync=target" >> $GITHUB_ENV
+
+
+      - name: "Configure and build"
+        run: |
+          ./bootstrap.sh
+          ./configure CC="$GCC_PATH" \
+            --with-gmp=$(brew --prefix) \
+            --with-mpfr=$(brew --prefix) \
+            --with-flint=$(brew --prefix)
+
+      - name: "Compile library"
+        run: |
+          # Source Homebrew environment
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          
+          $MAKE
+          $MAKE tests
+          ldd libhdme.so
+
+      - name: "Run tests"
+        run: |
+          # Source Homebrew environment
+          eval "$(/home/linuxbrew/.linuxbrew/bin/brew shellenv)"
+          
+          $MAKE check_ci
+
+  run-valgrind-tests:
+    runs-on: ubuntu-24.04
+
+    env:
+      FLINT_TEST_MULTIPLIER: "0.01"
+
+    steps:
+      - name: "Rescale multiplier"
+        run: |
+          FLINT_TEST_MULTIPLIER=$(echo "${FLINT_TEST_MULTIPLIER} * ${GLOBAL_MULTIPLIER}" | bc)
+          echo "FLINT_TEST_MULTIPLIER=${FLINT_TEST_MULTIPLIER}"
+          echo "FLINT_TEST_MULTIPLIER=${FLINT_TEST_MULTIPLIER}" >> $GITHUB_ENV
+
+      - uses: actions/checkout@v4
+      
+      - name: "Setup"
+        run: |
+          sudo apt-get install -y \
+            libflint-dev \
+            libgmp-dev \
+            libmpfr-dev \
+            autoconf \
+            libtool-bin \
+            valgrind
+
+          # Check versions
+          gcc --version
+          make --version
+          autoconf --version
+          libtool --version
+          valgrind --version
+          echo "MAKE=make -j$(expr $(nproc) + 1) --output-sync=target" >> $GITHUB_ENV
+      
+      - name: "Configure and build"
+        run: |
+          ./bootstrap.sh
+          ./configure
+
+      - name: "Compile library"
+        run: |
+          $MAKE
+          ldd libhdme.so
+      
+      - name: "Run tests under valgrind"
+        run: |
+          $MAKE -k check_ci \
+          TESTS_ENVIRONMENT="valgrind --leak-check=full --show-leak-kinds=all --track-origins=yes --error-exitcode=1" 

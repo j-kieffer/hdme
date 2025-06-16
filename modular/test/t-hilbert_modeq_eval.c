@@ -1,3 +1,4 @@
+#include <stdlib.h>
 
 #include "modular.h"
 
@@ -6,7 +7,7 @@ int main()
   slong iter;
   flint_rand_t state;
 
-  flint_randinit(state);
+  flint_rand_init(state);
   
   flint_printf("hilbert_modeq_eval....");
   fflush(stdout);
@@ -59,7 +60,7 @@ int main()
       modeq_clear(E);
     }
   
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;

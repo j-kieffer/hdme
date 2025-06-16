@@ -83,6 +83,7 @@ minkowski_reduce_g2(arb_mat_t r, fmpz_mat_t u, const arb_mat_t m,
   while (!stop)
     {
       iter++;
+      (void)iter; /* Used in debug code */
       
       /* Recompute r */
       arb_mat_congr_fmpz_mat(r_cur, u, m, prec);

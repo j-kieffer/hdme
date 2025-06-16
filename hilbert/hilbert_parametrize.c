@@ -1,4 +1,5 @@
 
+#include <string.h>
 #include "hilbert.h"
 
 void hilbert_parametrize(acb_ptr I, acb_srcptr rs, slong delta, slong prec)

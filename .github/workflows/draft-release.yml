@@ -1,0 +1,240 @@
+# This workflow creates draft releases for every push to any branch
+# It runs bootstrap.sh to generate the configure script and creates
+# source archives with the generated build system files
+name: "Draft Release"
+
+on:
+  push:
+    branches: ['master'] 
+  workflow_dispatch:
+    inputs:
+      tag_name:
+        description: 'Tag name for release'
+        required: false
+        default: 'draft'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  version_and_tag:
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.get-version.outputs.version }}
+      tag_name: ${{ steps.get-tag_name.outputs.tag_name }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      # Figure out TAG_NAME
+      - if: github.event_name == 'workflow_dispatch'
+        run: echo "TAG_NAME=${{ github.event.inputs.tag_name }}" >> $GITHUB_ENV
+      - if: github.event_name == 'push'
+        run: |
+          BRANCH_NAME=$(echo "${{ github.ref }}" | sed 's/refs\/heads\///')
+          COMMIT_SHORT=$(echo "${{ github.sha }}" | cut -c1-7)
+          echo "TAG_NAME=draft-${BRANCH_NAME}-${COMMIT_SHORT}" >> $GITHUB_ENV
+      
+      - id: get-tag_name
+        run: |
+          echo "tag_name=${TAG_NAME}"
+          echo "tag_name=${TAG_NAME}" >> $GITHUB_OUTPUT
+      
+      - name: "Get HDME version"
+        id: get-version
+        run: |
+          # Read version from VERSION file (same as configure.ac does)
+          if [ ! -f "VERSION" ]; then
+            echo "ERROR: VERSION file not found"
+            exit 1
+          fi
+          
+          version=$(cat VERSION | xargs)
+          
+          # Validate version format
+          if ! echo "$version" | grep -qE '^[0-9]+\.[0-9]+\.[0-9]+$'; then
+            echo "ERROR: Invalid version format in VERSION file: $version"
+            exit 1
+          fi
+          
+          # Add timestamp for draft releases
+          version="${version}-$(date +"%Y%m%d-%H%M%S")"
+          echo "version=${version}"
+          echo "version=${version}" >> $GITHUB_OUTPUT
+
+  make-archive:
+    runs-on: ubuntu-24.04
+    needs: version_and_tag
+    env:
+      HDME_VERSION: ${{ needs.version_and_tag.outputs.version }}
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: "Setup autotools"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y autoconf automake libtool-bin
+          autoconf --version
+          automake --version
+          libtool --version
+      
+      - name: "Run bootstrap to generate configure"
+        run: |
+          chmod +x bootstrap.sh
+          ./bootstrap.sh
+          ls -la configure
+      
+      - name: "Create source archive"
+        run: |
+          # Create a clean source directory
+          mkdir hdme-${HDME_VERSION}
+          
+          # Copy source files (excluding build artifacts and Git)
+          rsync -av --exclude='.git*' \
+                   --exclude='autom4te.cache' \
+                   --exclude='*.dylib' \
+                   --exclude='*.exe' \
+                   --exclude='*.o' \
+                   --exclude='*.a' \
+                   --exclude='*.so*' \
+                   --exclude='config.log' \
+                   --exclude='config.status' \
+                   --exclude='Makefile' \
+                   --exclude='hdme.pc' \
+                   --exclude='foo.txt' \
+                   --exclude='log' \
+                   --exclude='debug.p' \
+                   ./ hdme-${HDME_VERSION}/
+          
+          # Ensure configure script is executable
+          chmod +x hdme-${HDME_VERSION}/configure
+          
+          # Create archives
+          tar -czf hdme-${HDME_VERSION}.tar.gz hdme-${HDME_VERSION}/
+          tar -cJf hdme-${HDME_VERSION}.tar.xz hdme-${HDME_VERSION}/
+          zip -r hdme-${HDME_VERSION}.zip hdme-${HDME_VERSION}/
+          
+          # Verify archives
+          ls -la hdme-${HDME_VERSION}.*
+          echo "Archive contents:"
+          tar -tzf hdme-${HDME_VERSION}.tar.gz | head -20
+      
+      - name: "Upload source archive as artifact"
+        uses: actions/upload-artifact@v4
+        with:
+          if-no-files-found: error
+          name: hdme-source
+          path: hdme-${{ env.HDME_VERSION }}.*
+          retention-days: 7
+
+  test-archive:
+    needs: [version_and_tag, make-archive]
+    runs-on: ubuntu-24.04
+    env:
+      HDME_VERSION: ${{ needs.version_and_tag.outputs.version }}
+    steps:
+      - name: "Download archive from previous job"
+        uses: actions/download-artifact@v4
+        with:
+          name: hdme-source
+      
+      - name: "Setup dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y libgmp-dev libmpfr-dev libflint-dev build-essential
+          echo "MAKE=make -j$(expr $(nproc) + 1) --output-sync=target" >> $GITHUB_ENV
+      
+      - name: "Extract and test build"
+        run: |
+          tar -xf hdme-${HDME_VERSION}.tar.gz
+          cd hdme-${HDME_VERSION}
+          
+          echo "Testing configure script..."
+          ./configure --help | head -20
+          
+          echo "Configuring..."
+          ./configure
+          
+          echo "Building library..."
+          $MAKE
+          
+          echo "Library built successfully:"
+          ls -la libhdme*
+
+  create-draft-release:
+    needs: [version_and_tag, make-archive, test-archive]
+    runs-on: ubuntu-24.04
+    if: github.repository == github.repository  # Only run on main repo
+    env:
+      HDME_VERSION: ${{ needs.version_and_tag.outputs.version }}
+      TAG_NAME: ${{ needs.version_and_tag.outputs.tag_name }}
+      GH_REPO: ${{ github.repository }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: "Download archive from previous job"
+        uses: actions/download-artifact@v4
+        with:
+          name: hdme-source
+      
+      - name: "Generate release notes"
+        run: |
+          cat > $RUNNER_TEMP/notes.md << EOF
+          # HDME Draft Release ${HDME_VERSION}
+          
+          This is an automatically generated draft release created from commit \`${{ github.sha }}\` on branch \`${{ github.ref_name }}\`.
+          
+          ## What's included
+          - Source code with generated \`configure\` script (via \`bootstrap.sh\`)
+          - Pre-configured build system ready for compilation
+          - All necessary autotools-generated files
+          
+          ## Building from source
+          \`\`\`bash
+          tar -xf hdme-${HDME_VERSION}.tar.gz
+          cd hdme-${HDME_VERSION}
+          ./configure --help  # See available options
+          ./configure
+          make
+          \`\`\`
+          
+          ## Dependencies
+          - GMP (GNU Multiple Precision Arithmetic Library)
+          - MPFR (Multiple Precision Floating-Point Reliable Library)  
+          - FLINT (Fast Library for Number Theory)
+          
+          ## SHA256 Checksums
+          \`\`\`
+          EOF
+          
+          # Generate checksums
+          for ext in tar.gz tar.xz zip; do
+            fn=hdme-${HDME_VERSION}.$ext
+            if [ -f "$fn" ]; then
+              sha256sum $fn >> $RUNNER_TEMP/notes.md
+            fi
+          done
+          
+          echo '```' >> $RUNNER_TEMP/notes.md
+          
+          echo "Generated release notes:"
+          cat $RUNNER_TEMP/notes.md
+      
+      - name: "Create draft release"
+        run: |
+          # Delete existing draft release with same tag if it exists
+          gh release delete "$TAG_NAME" --yes || true
+          
+          # Create new draft release
+          gh release create "$TAG_NAME" \
+            --draft \
+            --prerelease \
+            --notes-file "$RUNNER_TEMP/notes.md" \
+            --title "HDME Draft Release ${HDME_VERSION}" \
+            --target ${{ github.sha }} \
+            hdme-${HDME_VERSION}.{tar.gz,tar.xz,zip}
+          
+          echo "Draft release created: https://github.com/${{ github.repository }}/releases/tag/$TAG_NAME" 

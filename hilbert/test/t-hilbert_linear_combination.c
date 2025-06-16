@@ -1,3 +1,4 @@
+#include <stdlib.h>
 
 #include "hilbert.h"
 
@@ -11,13 +12,13 @@ int main()
   flint_printf("hilbert_linear_combination....");
   fflush(stdout);
   
-  flint_randinit(state);
+  flint_rand_init(state);
   
   for (delta = 5; delta < 100; delta++)
     {
       if (hilbert_is_fundamental(delta))
 	{
-	  for (iter = 0; iter < 2 * arb_test_multiplier(); iter++)
+	  for (iter = 0; iter < 2 * flint_test_multiplier(); iter++)
 	    {
 	      acb_ptr t;
 	      acb_mat_t R;
@@ -99,7 +100,7 @@ int main()
 	}
     }
 
-  flint_randclear(state);
+  flint_rand_clear(state);
   flint_cleanup();
   flint_printf("PASS\n");
   return EXIT_SUCCESS;
